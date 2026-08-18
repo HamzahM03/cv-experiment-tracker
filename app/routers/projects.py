@@ -3,7 +3,10 @@ from sqlalchemy.orm import Session
 
 from app.db.dependencies import get_db
 from app.services import project as project_service
-from app.schemas.project import ProjectCreate
+from app.schemas.project import ProjectCreate, ProjectUpdate
+from fastapi import HTTPException
+
+
 
 
 
@@ -24,3 +27,42 @@ def create_project(
         db=db,
         project_data=project_data,
     )
+
+
+@router.get("/{project_id}")
+def get_project(
+    project_id: int,
+    db: Session = Depends(get_db),
+):
+    project = project_service.get_project_by_id(
+        db=db,
+        project_id=project_id,
+    )
+
+    if project is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Project not found",
+        )
+
+    return project
+
+@router.patch("/{project_id}")
+def update_project(
+    project_id: int,
+    project_data: ProjectUpdate,
+    db: Session = Depends(get_db),
+):
+    project = project_service.update_project(
+        db=db,
+        project_id=project_id,
+        project_data=project_data,
+    )
+
+    if project is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Project not found",
+        )
+
+    return project

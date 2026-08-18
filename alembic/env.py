@@ -1,6 +1,7 @@
 from logging.config import fileConfig
 from app.db.database import Base, DATABASE_URL
 from app.models.project import Project
+from app.models.dataset import Dataset
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool

@@ -1,11 +1,12 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, Response, status
+
 from sqlalchemy.orm import Session
 
 from app.db.dependencies import get_db
 from app.services import project as project_service
-from app.schemas.project import ProjectCreate, ProjectUpdate
-from fastapi import HTTPException
-from fastapi import Response, status
+from app.schemas.project import ProjectCreate, ProjectUpdate, ProjectResponse
+
+
 
 
 
@@ -13,12 +14,12 @@ from fastapi import Response, status
 router = APIRouter(prefix="/projects", tags=["projects"])
 
 
-@router.get("/")
+@router.get("/", response_model=list[ProjectResponse])
 def get_projects(db: Session = Depends(get_db)):
     return project_service.get_projects(db)
 
 
-@router.post("/")
+@router.post("/", response_model=ProjectResponse, status_code = 201)
 def create_project(
     project_data: ProjectCreate,
     db: Session = Depends(get_db),
@@ -29,7 +30,7 @@ def create_project(
     )
 
 
-@router.get("/{project_id}")
+@router.get("/{project_id}", response_model=ProjectResponse)
 def get_project(
     project_id: int,
     db: Session = Depends(get_db),
@@ -47,7 +48,7 @@ def get_project(
 
     return project
 
-@router.patch("/{project_id}")
+@router.patch("/{project_id}", response_model=ProjectResponse)
 def update_project(
     project_id: int,
     project_data: ProjectUpdate,

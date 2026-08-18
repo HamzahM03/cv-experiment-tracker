@@ -8,6 +8,8 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from app.models.project import Project
+    from app.models.image import Image
+    from app.models.experiment import Experiment
 
 
 class Dataset(Base):
@@ -38,4 +40,12 @@ class Dataset(Base):
 
     project: Mapped["Project"] = relationship(
         back_populates="datasets"
+    )
+
+    images: Mapped[list["Image"]] = relationship(
+    back_populates="dataset"
+    )
+
+    experiments: Mapped[list["Experiment"]] = relationship(
+    back_populates="dataset"
     )

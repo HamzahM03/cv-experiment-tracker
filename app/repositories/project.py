@@ -35,13 +35,16 @@ def update_project(
     project: Project,
     project_data: ProjectUpdate,
 ):
-    if project_data.name is not None:
-        project.name = project_data.name
-
-    if project_data.description is not None:
-        project.description = project_data.description
+    update_data = project_data.model_dump(exclude_unset=True)
+    
+    for field, value in update_data.items():
+        setattr(project, field, value)
 
     db.commit()
     db.refresh(project)
 
     return project
+
+def delete_project(db: Session, project: Project):
+    db.delete(project)
+    db.commit()

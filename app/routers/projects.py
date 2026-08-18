@@ -5,7 +5,7 @@ from app.db.dependencies import get_db
 from app.services import project as project_service
 from app.schemas.project import ProjectCreate, ProjectUpdate
 from fastapi import HTTPException
-
+from fastapi import Response, status
 
 
 
@@ -66,3 +66,21 @@ def update_project(
         )
 
     return project
+
+@router.delete("/{project_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_project(
+    project_id: int,
+    db: Session = Depends(get_db),
+):
+    deleted = project_service.delete_project(
+        db=db,
+        project_id=project_id,
+    )
+
+    if not deleted:
+        raise HTTPException(
+            status_code=404,
+            detail="Project not found",
+        )
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

@@ -36,3 +36,12 @@ def update_project(
         project=project,
         project_data=project_data,
     )
+
+def delete_project(db: Session, project_id: int):
+    project = project_repo.get_project_by_id(db, project_id)
+
+    if project is None:
+        return False
+
+    project_repo.delete_project(db, project)
+    return True

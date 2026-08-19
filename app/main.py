@@ -3,6 +3,9 @@ from fastapi.templating import Jinja2Templates
 from app.routers.projects import router as projects_router
 from app.routers.dataset import router as dataset_router
 from app.routers.image import router as image_router
+from app.routers.experiments import router as experiments_router
+
+
 
 
 
@@ -14,6 +17,7 @@ templates = Jinja2Templates(directory="app/templates")
 app.include_router(projects_router)
 app.include_router(dataset_router)
 app.include_router(image_router)
+app.include_router(experiments_router)
 
 
 @app.get("/")

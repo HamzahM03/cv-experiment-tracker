@@ -1,22 +1,27 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status, Request
 
 from sqlalchemy.orm import Session
 
 from app.db.dependencies import get_db
 from app.services import project as project_service
 from app.schemas.project import ProjectCreate, ProjectUpdate, ProjectResponse
-
-
-
-
+from app.template_config import templates
 
 
 router = APIRouter(prefix="/projects", tags=["projects"])
 
 
-@router.get("/", response_model=list[ProjectResponse])
-def get_projects(db: Session = Depends(get_db)):
-    return project_service.get_projects(db)
+@router.get("/")
+def get_projects(request:Request, db: Session = Depends(get_db)):
+    projects = project_service.get_projects(db)
+
+    return templates.TemplateResponse(
+    request=request,
+    name="pages/projects.html",
+    context={
+        "projects": projects,
+        },
+    )
 
 
 @router.post("/", response_model=ProjectResponse, status_code = 201)

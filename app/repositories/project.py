@@ -1,13 +1,29 @@
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 
 from app.models.project import Project
 from app.schemas.project import ProjectUpdate
 
 
-def get_projects(db: Session):
-    stmt = select(Project)
+def get_projects(
+    db: Session,
+    page: int = 1,
+    page_size: int = 6,
+):
+    offset = (page - 1) * page_size
+
+    stmt = (
+        select(Project)
+        .order_by(Project.id)
+        .offset(offset)
+        .limit(page_size)
+    )
+
     return db.scalars(stmt).all()
+
+def get_project_count(db: Session):
+    stmt = select(func.count()).select_from(Project)
+    return db.scalar(stmt)
 
 
 def create_project(

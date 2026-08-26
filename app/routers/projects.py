@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, status, Request
+from fastapi import APIRouter, Depends, HTTPException, Response, status, Request, Query
 
 from sqlalchemy.orm import Session
 
@@ -12,14 +12,49 @@ router = APIRouter(prefix="/projects", tags=["projects"])
 
 
 @router.get("/")
-def get_projects(request:Request, db: Session = Depends(get_db)):
-    projects = project_service.get_projects(db)
+def get_projects(request:Request, page:int = Query(default=1, ge=1), db: Session = Depends(get_db)):
+    projects = project_service.get_projects(db, page=page, page_size=6)
+
+    PAGE_SIZE = 6
+
+    total_count = project_service.get_project_count(db)
+
 
     return templates.TemplateResponse(
     request=request,
     name="pages/projects.html",
     context={
         "projects": projects,
+        "page":page,
+        "page_size": PAGE_SIZE,
+        "total_count": total_count,
+        },
+    )
+
+@router.get("/grid")
+def get_projects_grid(
+    request: Request,
+    page: int = Query(default=1, ge=1),
+    db: Session = Depends(get_db),
+):
+    page_size = 6
+
+    projects = project_service.get_projects(
+        db=db,
+        page=page,
+        page_size=page_size,
+    )
+
+    total_count = project_service.get_project_count(db)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="partials/projects_grid.html",
+        context={
+            "projects": projects,
+            "page": page,
+            "page_size": page_size,
+            "total_count": total_count,
         },
     )
 

@@ -4,8 +4,11 @@ from app.repositories import project as project_repo
 from app.schemas.project import ProjectCreate, ProjectUpdate
 
 
-def get_projects(db: Session):
-    return project_repo.get_projects(db)
+def get_projects(
+        db: Session,
+        page: int = 1,
+        page_size: int = 6,):
+    return project_repo.get_projects(db, page, page_size)
 
 
 def create_project(db: Session, project_data: ProjectCreate):
@@ -45,3 +48,6 @@ def delete_project(db: Session, project_id: int):
 
     project_repo.delete_project(db, project)
     return True
+
+def get_project_count(db: Session):
+    return project_repo.get_project_count(db)

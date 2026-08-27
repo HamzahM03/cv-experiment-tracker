@@ -18,3 +18,6 @@ dev = [
     "pytest",
     "httpx",
 ]
+
+[tool.setuptools.packages.find]
+include = ["app*"]

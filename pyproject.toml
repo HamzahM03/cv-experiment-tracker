@@ -12,3 +12,9 @@ dependencies = [
     "alembic",
     "python-dotenv",
 ]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "httpx",
+]

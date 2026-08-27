@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <title>{{ project.name }}</title>
+</head>
+<body>
+    <div class="container py-4">
+        <a href="/projects" class="btn btn-link px-0 mb-3">&larr; Back to Projects</a>
+
+        <h1>{{ project.name }}</h1>
+
+        {% if project.description %}
+            <p class="lead">{{ project.description }}</p>
+        {% else %}
+            <p class="lead text-muted">No description</p>
+        {% endif %}
+
+        <p class="text-muted">
+            Created: {{ project.created_at.strftime('%b %d, %Y') }}
+        </p>
+
+        <h2 class="mt-4">Datasets</h2>
+        {% if datasets %}
+            <ul class="list-group mb-4">
+                {% for dataset in datasets %}
+                    <li class="list-group-item">
+                        <strong>{{ dataset.name }}</strong>
+                        {% if dataset.description %}
+                            <div>{{ dataset.description }}</div>
+                        {% else %}
+                            <div class="text-muted">No description</div>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="mb-4">No datasets yet</p>
+        {% endif %}
+
+        <h2>Experiments</h2>
+        {% if experiments %}
+            <ul class="list-group mb-4">
+                {% for experiment in experiments %}
+                    <li class="list-group-item">
+                        <strong>{{ experiment.name }}</strong>
+                        &mdash; {{ experiment.model_name }}, lr={{ experiment.learning_rate }}, epochs={{ experiment.epochs }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="mb-4">No experiments yet</p>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -4,6 +4,8 @@ from sqlalchemy.orm import Session
 
 from app.db.dependencies import get_db
 from app.services import project as project_service
+from app.services import dataset as dataset_service
+from app.services import experiment as experiment_service
 from app.schemas.project import ProjectCreate, ProjectUpdate, ProjectResponse
 from app.template_config import templates
 
@@ -87,6 +89,37 @@ def get_project(
         )
 
     return project
+
+
+@router.get("/{project_id}/detail")
+def get_project_detail(
+    project_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    project = project_service.get_project_by_id(
+        db=db,
+        project_id=project_id,
+    )
+
+    if project is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Project not found",
+        )
+
+    datasets = dataset_service.get_datasets_by_project(db=db, project_id=project_id)
+    experiments = experiment_service.get_experiments_by_project(db=db, project_id=project_id)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="pages/project_detail.html",
+        context={
+            "project": project,
+            "datasets": datasets,
+            "experiments": experiments,
+        },
+    )
 
 @router.patch("/{project_id}", response_model=ProjectResponse)
 def update_project(

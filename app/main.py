@@ -1,17 +1,15 @@
 from fastapi import FastAPI, Request
-from fastapi.templating import Jinja2Templates
 from app.routers.projects import router as projects_router
 from app.routers.dataset import router as dataset_router
 from app.routers.image import router as image_router
 from app.routers.experiments import router as experiments_router
+from app.template_config import templates
 
 
 
 
 
 app = FastAPI()
-
-templates = Jinja2Templates(directory="app/templates")
 
 
 app.include_router(projects_router)

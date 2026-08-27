@@ -1,0 +1,70 @@
+<div id="dataset-images">
+  <form method="get" action="/datasets/{{ dataset.id }}/detail" class="row g-2 mb-3">
+    <input type="hidden" name="page" value="1">
+    <div class="col-auto">
+      <input type="text" name="label" value="{{ label or '' }}" class="form-control" placeholder="Label">
+    </div>
+    <div class="col-auto">
+      <input type="text" name="split" value="{{ split or '' }}" class="form-control" placeholder="Split">
+    </div>
+    <div class="col-auto">
+      <input type="text" name="search" value="{{ search or '' }}" class="form-control" placeholder="Search filename">
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn btn-primary">Filter</button>
+    </div>
+  </form>
+
+  {% if images %}
+    <table class="table table-sm table-bordered">
+      <thead>
+        <tr>
+          <th>Filename</th>
+          <th>Label</th>
+          <th>Split</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for image in images %}
+          <tr>
+            <td>{{ image.filename }}</td>
+            <td>{{ image.label or "" }}</td>
+            <td>{{ image.split or "" }}</td>
+            <td>{{ image.notes or "" }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No images match the current filters.</p>
+  {% endif %}
+
+  <div class="d-flex justify-content-between mt-3">
+    {% if page > 1 %}
+      <a
+        class="btn btn-outline-secondary"
+        hx-get="/datasets/{{ dataset.id }}/images/grid?label={{ (label or '') | urlencode }}&split={{ (split or '') | urlencode }}&search={{ (search or '') | urlencode }}&page={{ page - 1 }}"
+        hx-target="#dataset-images"
+        hx-swap="outerHTML"
+        hx-push-url="/datasets/{{ dataset.id }}/detail?label={{ (label or '') | urlencode }}&split={{ (split or '') | urlencode }}&search={{ (search or '') | urlencode }}&page={{ page - 1 }}"
+      >
+        Previous
+      </a>
+    {% else %}
+      <span></span>
+    {% endif %}
+
+    {% if page * page_size < image_count %}
+      <a
+        class="btn btn-outline-primary"
+        hx-get="/datasets/{{ dataset.id }}/images/grid?label={{ (label or '') | urlencode }}&split={{ (split or '') | urlencode }}&search={{ (search or '') | urlencode }}&page={{ page + 1 }}"
+        hx-target="#dataset-images"
+        hx-swap="outerHTML"
+        hx-push-url="/datasets/{{ dataset.id }}/detail?label={{ (label or '') | urlencode }}&split={{ (split or '') | urlencode }}&search={{ (search or '') | urlencode }}&page={{ page + 1 }}"
+      >
+        Next
+      </a>
+    {% endif %}
+  </div>
+</div>

@@ -27,7 +27,7 @@
             <ul class="list-group mb-4">
                 {% for dataset in datasets %}
                     <li class="list-group-item">
-                        <strong>{{ dataset.name }}</strong>
+                        <a href="/datasets/{{ dataset.id }}/detail"><strong>{{ dataset.name }}</strong></a>
                         {% if dataset.description %}
                             <div>{{ dataset.description }}</div>
                         {% else %}

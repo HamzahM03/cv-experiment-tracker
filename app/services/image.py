@@ -49,3 +49,19 @@ def get_images_by_dataset(
         page=page,
         page_size=page_size,
     )
+
+
+def get_image_count_by_dataset(
+    db: Session,
+    dataset_id: int,
+    label: str | None = None,
+    split: str | None = None,
+    search: str | None = None,
+):
+    return image_repo.get_image_count_by_dataset(
+        db=db,
+        dataset_id=dataset_id,
+        label=label,
+        split=split,
+        search=search,
+    )

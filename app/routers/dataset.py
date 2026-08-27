@@ -1,10 +1,14 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Response
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status, Response
 from sqlalchemy.orm import Session
 
 from app.db.dependencies import get_db
 from app.schemas.dataset import DatasetCreate, DatasetResponse, DatasetUpdate
 from app.services import dataset as dataset_service
+from app.services import image as image_service
+from app.services import project as project_service
+from app.template_config import templates
 
+IMAGE_PAGE_SIZE = 12
 
 router = APIRouter(tags=["datasets"])
 
@@ -77,6 +81,60 @@ def get_dataset(
 
     return dataset
 
+
+@router.get("/datasets/{dataset_id}/detail")
+def get_dataset_detail(
+    dataset_id: int,
+    request: Request,
+    label: str | None = None,
+    split: str | None = None,
+    search: str | None = None,
+    page: int = Query(default=1, ge=1),
+    db: Session = Depends(get_db),
+):
+    dataset = dataset_service.get_dataset_by_id(db=db, dataset_id=dataset_id)
+
+    if dataset is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Dataset not found",
+        )
+
+    project = project_service.get_project_by_id(db=db, project_id=dataset.project_id)
+
+    images = image_service.get_images_by_dataset(
+        db=db,
+        dataset_id=dataset_id,
+        label=label,
+        split=split,
+        search=search,
+        page=page,
+        page_size=IMAGE_PAGE_SIZE,
+    )
+
+    image_count = image_service.get_image_count_by_dataset(
+        db=db,
+        dataset_id=dataset_id,
+        label=label,
+        split=split,
+        search=search,
+    )
+
+    return templates.TemplateResponse(
+        request=request,
+        name="pages/dataset_detail.html",
+        context={
+            "dataset": dataset,
+            "project": project,
+            "images": images,
+            "label": label,
+            "split": split,
+            "search": search,
+            "page": page,
+            "page_size": IMAGE_PAGE_SIZE,
+            "image_count": image_count,
+        },
+    )
 
 
 @router.patch(

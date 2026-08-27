@@ -110,6 +110,7 @@ def get_project_detail(
 
     datasets = dataset_service.get_datasets_by_project(db=db, project_id=project_id)
     experiments = experiment_service.get_experiments_by_project(db=db, project_id=project_id)
+    dataset_by_id = {dataset.id: dataset for dataset in datasets}
 
     return templates.TemplateResponse(
         request=request,
@@ -118,6 +119,7 @@ def get_project_detail(
             "project": project,
             "datasets": datasets,
             "experiments": experiments,
+            "dataset_by_id": dataset_by_id,
         },
     )
 

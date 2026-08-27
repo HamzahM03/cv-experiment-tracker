@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <title>{{ experiment.name }}</title>
+</head>
+<body>
+    <div class="container py-4">
+        <a href="/projects/{{ project.id }}/detail" class="btn btn-link px-0 mb-3">&larr; Back to {{ project.name }}</a>
+
+        <h1>{{ experiment.name }}</h1>
+
+        <p class="text-muted">
+            Created: {{ experiment.created_at.strftime('%b %d, %Y') }}
+        </p>
+
+        <ul class="list-group mb-4">
+            <li class="list-group-item">
+                <strong>Model:</strong> {{ experiment.model_name }}
+            </li>
+            <li class="list-group-item">
+                <strong>Learning rate:</strong> {{ experiment.learning_rate }}
+            </li>
+            <li class="list-group-item">
+                <strong>Epochs:</strong> {{ experiment.epochs }}
+            </li>
+            <li class="list-group-item">
+                <strong>Train accuracy:</strong>
+                {% if experiment.train_accuracy is not none %}
+                    {{ experiment.train_accuracy }}
+                {% else %}
+                    Not available yet
+                {% endif %}
+            </li>
+            <li class="list-group-item">
+                <strong>Validation accuracy:</strong>
+                {% if experiment.validation_accuracy is not none %}
+                    {{ experiment.validation_accuracy }}
+                {% else %}
+                    Not available yet
+                {% endif %}
+            </li>
+            <li class="list-group-item">
+                <strong>Notes:</strong>
+                {% if experiment.notes %}
+                    {{ experiment.notes }}
+                {% else %}
+                    No notes
+                {% endif %}
+            </li>
+        </ul>
+
+        <h2>Related</h2>
+        <ul class="list-group mb-4">
+            <li class="list-group-item">
+                Project:
+                <a href="/projects/{{ project.id }}/detail">{{ project.name }}</a>
+            </li>
+            <li class="list-group-item">
+                Dataset:
+                <a href="/datasets/{{ dataset.id }}/detail">{{ dataset.name }}</a>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>

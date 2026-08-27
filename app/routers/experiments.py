@@ -1,9 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.orm import Session
 
 from app.db.dependencies import get_db
 from app.schemas.experiment import ExperimentCreate, ExperimentResponse
+from app.services import dataset as dataset_service
 from app.services import experiment as experiment_service
+from app.services import project as project_service
+from app.template_config import templates
 
 
 router = APIRouter(tags=["experiments"])
@@ -54,6 +57,44 @@ def get_experiment(
         )
 
     return experiment
+
+
+@router.get("/experiments/{experiment_id}/detail")
+def get_experiment_detail(
+    experiment_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    experiment = experiment_service.get_experiment_by_id(
+        db=db,
+        experiment_id=experiment_id,
+    )
+
+    if experiment is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Experiment not found",
+        )
+
+    project = project_service.get_project_by_id(db=db, project_id=experiment.project_id)
+    dataset = dataset_service.get_dataset_by_id(db=db, dataset_id=experiment.dataset_id)
+
+    if project is None or dataset is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Related project or dataset not found",
+        )
+
+    return templates.TemplateResponse(
+        request=request,
+        name="pages/experiment_detail.html",
+        context={
+            "experiment": experiment,
+            "project": project,
+            "dataset": dataset,
+        },
+    )
+
 
 @router.get(
     "/projects/{project_id}/experiments",

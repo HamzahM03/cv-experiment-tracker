@@ -28,6 +28,9 @@ def create_experiment(
     model_name="resnet18",
     learning_rate=0.001,
     epochs=5,
+    train_accuracy=None,
+    validation_accuracy=None,
+    notes=None,
 ):
     experiment = Experiment(
         project_id=project.id,
@@ -36,6 +39,9 @@ def create_experiment(
         model_name=model_name,
         learning_rate=learning_rate,
         epochs=epochs,
+        train_accuracy=train_accuracy,
+        validation_accuracy=validation_accuracy,
+        notes=notes,
     )
     db_session.add(experiment)
     db_session.commit()

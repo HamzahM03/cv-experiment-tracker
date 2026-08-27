@@ -44,9 +44,16 @@
         {% if experiments %}
             <ul class="list-group mb-4">
                 {% for experiment in experiments %}
+                    {% set ds = dataset_by_id.get(experiment.dataset_id) %}
                     <li class="list-group-item">
-                        <strong>{{ experiment.name }}</strong>
-                        &mdash; {{ experiment.model_name }}, lr={{ experiment.learning_rate }}, epochs={{ experiment.epochs }}
+                        <a href="/experiments/{{ experiment.id }}/detail"><strong>{{ experiment.name }}</strong></a>
+                        &mdash; {{ experiment.model_name }}
+                        {% if ds %}
+                            &mdash; {{ ds.name }}
+                        {% endif %}
+                        {% if experiment.validation_accuracy is not none %}
+                            &mdash; val acc: {{ experiment.validation_accuracy }}
+                        {% endif %}
                     </li>
                 {% endfor %}
             </ul>
